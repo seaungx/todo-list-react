@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import 'antd/dist/antd.css';
-import { Input, Button, List } from 'antd';
 import store from './store';
-import { getInputChangeAction, getAddItemAction, getDeleteItemAction } from './store/actionCreators';
+import { getInputChangeAction, getAddItemAction, getDeleteItemAction, getTodoList } from './store/actionCreators';
+import TodoListUI from './TodoListUI';
 
 
 export default class TodoList extends Component {
@@ -13,26 +13,24 @@ export default class TodoList extends Component {
     this.handlerInputChange = this.handlerInputChange.bind(this);
     this.handleStoreChange = this.handleStoreChange.bind(this);
     this.handlerBtnClick = this.handlerBtnClick.bind(this);
+    this.handlerItemDelete = this.handlerItemDelete.bind(this);
     store.subscribe(this.handleStoreChange);
   }
 
   render() {
     return (
-      <div style={{ marginTop: '10px', marginLeft: '10px'}}>
-        <div>
-          <Input
-            value={this.state.inputValue} placehodler='input info.'
-            style={{ width: '300px'}}
-            onChange={this.handlerInputChange}/>
-          <Button type="primary" onClick={this.handlerBtnClick}>Submit</Button>
-        </div>
-        <List
-          bordered
-          style={{ marginTop: '10px', width: '300px'}}
-          dataSource={this.state.list}
-          renderItem={(item, index) => (<List.Item onClick={this.handlerItemDelete.bind(this, index)}>{item}</List.Item>)}/>
-      </div>
+      <TodoListUI
+        inputValue={this.state.inputValue}
+        handlerInputChange={this.handlerInputChange}
+        handlerBtnClick={this.handlerBtnClick}
+        handlerItemDelete={this.handlerItemDelete}
+        list={this.state.list}/>
     )
+  }
+
+  componentDidMount() {
+    const action = getTodoList();
+    store.dispatch(action);
   }
 
   handlerInputChange(e) {
